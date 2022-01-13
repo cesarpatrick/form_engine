@@ -1,0 +1,59 @@
+{
+  "fields":[
+     {
+        "key":"inputKey",
+        "type":"Input",
+        "label":"Hi Group",
+        "placeholder":"Hi Group flutter",
+        "required":true,
+        "value":"cesar"
+     },
+     {
+        "key":"inputKey",
+        "type":"Input",
+        "label":"Initial Value",
+        "value":"Hello",
+        "required":true
+     },
+     {
+        "key": "radiobutton1",
+        "type":"RadioButton",
+        "label":"Radio Button tests",
+        "value":2,
+        "items":[
+           {
+              "label":"product 1",
+              "value":1
+           },
+           {
+              "label":"product 2",
+              "value":2
+           },
+           {
+              "label":"product 3",
+              "value":3
+           }
+        ]
+     },
+     {
+        "key":"select1",
+        "type":"Select",
+        "label":"Select test",
+        "value":"product 1",
+        "items":[
+           {
+              "label":"product 1",
+              "value":"product 1"
+           },
+           {
+              "label":"product 2",
+              "value":"product 2"
+           },
+           {
+              "label":"product 3",
+              "value":"product 3"
+           }
+        ]
+     }
+  ]
+}
