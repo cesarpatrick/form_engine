@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_dynamic_forms/form_builder/form_builder_modal.dart';
+import 'package:flutter_dynamic_forms/form_builder/input_form_modal.dart';
 import 'package:flutter_dynamic_forms/model/json_form.dart';
 import 'package:flutter_dynamic_forms/service/form_builder_service.dart';
 // ignore: import_of_legacy_library_into_null_safe
@@ -94,7 +95,7 @@ class _MainFormBuilderScreenState extends State<MainFormBuilderScreen> {
                   showDialog(
                       context: context,
                       builder: (BuildContext context) {
-                        return const FormBuilderModal();
+                        return const FormBuilderModal(form: InputFormModal());
                       })
                 },
                 style: ButtonStyle(
