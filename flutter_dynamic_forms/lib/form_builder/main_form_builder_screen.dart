@@ -2,11 +2,16 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_dynamic_forms/form_builder/form_builder_modal.dart';
-import 'package:flutter_dynamic_forms/form_builder/input_form_modal.dart';
+import 'package:flutter_dynamic_forms/form_builder/input_form.dart';
+import 'package:flutter_dynamic_forms/form_builder/radio_button_form.dart';
+import 'package:flutter_dynamic_forms/form_builder/switch_input_form.dart';
 import 'package:flutter_dynamic_forms/model/json_form.dart';
+import 'package:flutter_dynamic_forms/model/constants.dart';
 import 'package:flutter_dynamic_forms/service/form_builder_service.dart';
 // ignore: import_of_legacy_library_into_null_safe
 import 'package:json_to_form/json_schema.dart';
+
+import 'checkbox_input_form.dart';
 
 class MainFormBuilderScreen extends StatefulWidget {
   const MainFormBuilderScreen({Key? key}) : super(key: key);
@@ -24,13 +29,30 @@ class _MainFormBuilderScreenState extends State<MainFormBuilderScreen> {
 
   JsonForm form = JsonForm(fields: fields);
 
+  dynamic response;
+
   @override
   void initState() {
     super.initState();
   }
 
-  void _addNewField() {
-    fields.add(formService.getInputField("", true, "Name"));
+  void _addNewField(Field field, String type) {
+    switch (type) {
+      case INPUT:
+        fields.add(formService.getInputField(field));
+        break;
+      case RADIO_BUTTON:
+        fields.add(formService.getRadioButtonField(field));
+        break;
+      case SWITCH_INPUT:
+        fields.add(formService.getSwitchField(field));
+        break;
+      case CHECKBOX_INPUT:
+        fields.add(formService.getCheckboxField(field));
+        break;
+      default:
+        fields.add(formService.getInputField(field));
+    }
 
     setState(() {
       form = JsonForm(fields: fields);
@@ -71,7 +93,13 @@ class _MainFormBuilderScreenState extends State<MainFormBuilderScreen> {
             children: [
               const SizedBox(width: 20),
               ElevatedButton(
-                onPressed: () => {_addNewField()},
+                onPressed: () => {
+                  showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return const FormBuilderModal(form: InputFormModal());
+                      }).then((value) => _addNewField(value, INPUT))
+                },
                 style: ButtonStyle(
                   backgroundColor:
                       MaterialStateProperty.all<Color>(Colors.green),
@@ -95,8 +123,9 @@ class _MainFormBuilderScreenState extends State<MainFormBuilderScreen> {
                   showDialog(
                       context: context,
                       builder: (BuildContext context) {
-                        return const FormBuilderModal(form: InputFormModal());
-                      })
+                        return const FormBuilderModal(
+                            form: RadioButtonFormModal());
+                      }).then((value) => _addNewField(value, RADIO_BUTTON))
                 },
                 style: ButtonStyle(
                   backgroundColor:
@@ -117,7 +146,13 @@ class _MainFormBuilderScreenState extends State<MainFormBuilderScreen> {
               ),
               const SizedBox(width: 20),
               ElevatedButton(
-                onPressed: () => {_addNewField()},
+                onPressed: () => {
+                  showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return const FormBuilderModal(form: InputFormModal());
+                      }).then((value) => _addNewField(value, INPUT))
+                },
                 style: ButtonStyle(
                   backgroundColor:
                       MaterialStateProperty.all<Color>(Colors.green),
@@ -137,7 +172,14 @@ class _MainFormBuilderScreenState extends State<MainFormBuilderScreen> {
               ),
               const SizedBox(width: 20),
               ElevatedButton(
-                onPressed: () => {_addNewField()},
+                onPressed: () => {
+                  showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return const FormBuilderModal(
+                            form: CheckboxInputFormModal());
+                      }).then((value) => _addNewField(value, CHECKBOX_INPUT))
+                },
                 style: ButtonStyle(
                   backgroundColor:
                       MaterialStateProperty.all<Color>(Colors.green),
@@ -157,7 +199,14 @@ class _MainFormBuilderScreenState extends State<MainFormBuilderScreen> {
               ),
               const SizedBox(width: 20),
               ElevatedButton(
-                onPressed: () => {_addNewField()},
+                onPressed: () => {
+                  showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return const FormBuilderModal(
+                            form: SwitchInputFormModal());
+                      }).then((value) => _addNewField(value, SWITCH_INPUT))
+                },
                 style: ButtonStyle(
                   backgroundColor:
                       MaterialStateProperty.all<Color>(Colors.green),
@@ -211,7 +260,12 @@ class _MainFormBuilderScreenState extends State<MainFormBuilderScreen> {
                     child: Center(
                         child: JsonSchema(
                       form: jsonEncode(form),
-                      onChanged: (value) {},
+                      onChanged: (dynamic response) {
+                        this.response = response;
+                        print(response);
+                        fields = JsonForm.fromJson(this.response).fields;
+                        form = JsonForm(fields: fields);
+                      },
                       actionSave: (data) {
                         print(data);
                       },

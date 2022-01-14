@@ -1,26 +1,48 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dynamic_forms/model/json_form.dart';
 
-class InputFormModal extends StatefulWidget {
-  const InputFormModal({Key? key}) : super(key: key);
+class SwitchInputFormModal extends StatefulWidget {
+  const SwitchInputFormModal({Key? key}) : super(key: key);
 
   @override
-  _InputFormModalState createState() => _InputFormModalState();
+  _SwitchInputFormModalState createState() => _SwitchInputFormModalState();
 }
 
-class _InputFormModalState extends State<InputFormModal> {
-  bool initialValue = false;
+class _SwitchInputFormModalState extends State<SwitchInputFormModal> {
+  bool initialValueSwitch = false;
+  TextEditingController labelController = TextEditingController();
+  TextEditingController initialValueController = TextEditingController();
+
+  bool _validate = false;
 
   @override
   void initState() {
     super.initState();
-    initialValue = false;
+    initialValueSwitch = false;
+  }
+
+  @override
+  void dispose() {
+    // Clean up the controller when the widget is disposed.
+    labelController.dispose();
+    initialValueController.dispose();
+    super.dispose();
+  }
+
+  Field _next(String label, String initialValue, bool required) {
+    return Field(
+        key: "switch",
+        type: "Switch",
+        label: label,
+        value: false,
+        required: required);
   }
 
   @override
   Widget build(BuildContext context) {
     return Container(
         width: 400,
-        height: 350,
+        height: 250,
         child: Column(
           children: [
             Padding(
@@ -30,55 +52,59 @@ class _InputFormModalState extends State<InputFormModal> {
                     const Padding(
                       padding: EdgeInsets.all(15),
                       child: Text(
-                        "Parameters",
+                        "Switch Input Field",
                         style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                    const Padding(
-                      padding: EdgeInsets.all(15),
-                      child: TextField(
-                        decoration: InputDecoration(
-                          border: OutlineInputBorder(),
-                          labelText: 'Label',
-                          hintText: 'Enter the label',
-                        ),
-                      ),
-                    ),
-                    const Padding(
-                      padding: EdgeInsets.all(15),
-                      child: TextField(
-                        obscureText: true,
-                        decoration: InputDecoration(
-                          border: OutlineInputBorder(),
-                          labelText: 'Initial Value',
-                          hintText: 'Enter the initial value',
-                        ),
                       ),
                     ),
                     Row(children: <Widget>[
                       const SizedBox(
-                        width: 10,
+                        width: 20,
                       ),
                       const Text(
                         'Required',
                         style: TextStyle(fontSize: 17.0),
                       ),
                       Switch(
-                        activeColor: Colors.red,
-                        value: initialValue,
+                        activeColor: Colors.green,
+                        value: initialValueSwitch,
                         onChanged: (value) {
                           setState(() {
-                            initialValue = value;
+                            initialValueSwitch = value;
                           });
                         },
                       )
                     ]),
+                    Padding(
+                      padding: const EdgeInsets.all(15),
+                      child: TextField(
+                        controller: labelController,
+                        decoration: InputDecoration(
+                          border: const OutlineInputBorder(),
+                          labelText: 'Label',
+                          hintText: 'Enter the label',
+                          errorText: _validate ? 'Label Can\'t Be Empty' : null,
+                        ),
+                      ),
+                    ),
                     Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      mainAxisAlignment: MainAxisAlignment.end,
                       children: [
                         ElevatedButton(
-                          onPressed: () => {Navigator.of(context).pop()},
+                          onPressed: () => {
+                            setState(() {
+                              labelController.text.isEmpty
+                                  ? _validate = true
+                                  : _validate = false;
+
+                              if (_validate == false) {
+                                Navigator.of(context).pop(_next(
+                                    labelController.text,
+                                    initialValueController.text,
+                                    initialValueSwitch));
+                              }
+                            })
+                          },
                           style: ButtonStyle(
                             backgroundColor:
                                 MaterialStateProperty.all<Color>(Colors.green),
@@ -87,13 +113,13 @@ class _InputFormModalState extends State<InputFormModal> {
                             text: const TextSpan(
                               children: [
                                 TextSpan(
-                                    text: "Ok",
+                                    text: "Next",
                                     style: TextStyle(color: Colors.white))
                               ],
                             ),
                           ),
                         ),
-                        const SizedBox(width: 30),
+                        const SizedBox(width: 10),
                         ElevatedButton(
                           onPressed: () => {Navigator.of(context).pop()},
                           style: ButtonStyle(
