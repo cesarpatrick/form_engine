@@ -45,7 +45,7 @@ class _CheckboxInputFormModalState extends State<CheckboxInputFormModal> {
       String label, String initialValue, bool required, List<Item> items) {
     return Field(
         key: "key",
-        type: "RadioButton",
+        type: "Checkbox",
         label: label,
         value: initialValue,
         required: required,
@@ -58,7 +58,12 @@ class _CheckboxInputFormModalState extends State<CheckboxInputFormModal> {
   }
 
   void _addOption(String label, dynamic value) {
-    items.add(Item(label: label, value: value));
+    if (value == "true") {
+      items.add(Item(label: label, value: true));
+    } else {
+      items.add(Item(label: label, value: false));
+    }
+
     labelItemController.text = "";
     valueItemController.text = "";
   }
